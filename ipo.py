@@ -1,4 +1,6 @@
 '''
+https://algo.monster/problems/citadel-oa-initial-public-offering
+
 A company registers an IPO on a website sellshares.com. All the shares on this website are available for bidding for a particular time frame called the bidding window. At the end of the bidding window an auction logic is used to decide how many of the available shares go to which bidder until all the shares that are available have been allotted, or all the bidders have received the shares they bid for, whichever comes earlier.
 
 The bids arrive from the users in the form of <user Id, number of shares, bidding price, timestamp> until the bidding window is closed.
@@ -33,7 +35,6 @@ Constraints
 '''
 
 from typing import List
-from collections import OrderedDict
 
 class Bidder:
     
@@ -44,6 +45,9 @@ class Bidder:
         self.timestamp = timestamp
         self.received = 0
 
+    def __str__(self):
+        return f'Bidder id {self.u} asking for {self.shares} shares at price {self.price} at time {self.timestamp}, having received {self.received} shares'
+    
 def get_unallotted_users(bids: List[List[int]], total_shares: int) -> List[int]:
     # WRITE YOUR BRILLIANT CODE HERE
     
@@ -64,14 +68,14 @@ def get_unallotted_users(bids: List[List[int]], total_shares: int) -> List[int]:
             # seen this price before
             bidders[price].append(Bidder(bid[0], bid[1], bid[2], bid[3]))
     
-    
     prices.sort(reverse=True) # sort the bids in descending order
+
     
     while total_shares > 0 and len(prices) > 0: # shares remain and still have bidders to allocate shares
         cur_highest_bid = prices.pop(0)
         contestant_bidders = bidders[cur_highest_bid]
         if len(contestant_bidders) > 1: # allocate shares among bidders
-            total_shares_asked = sum([bidder.price for bidder in bidders[cur_highest_bid]])
+            total_shares_asked = sum([bidder.shares for bidder in bidders[cur_highest_bid]])
             
             if total_shares_asked <= total_shares: # all contestants will get at least one share
                 total_shares -= total_shares_asked
@@ -95,9 +99,15 @@ def get_unallotted_users(bids: List[List[int]], total_shares: int) -> List[int]:
 
         else: # only one bidder at this price
             bidder = contestant_bidders.pop(0) # will get shares 
-            bidder.received = bidder.shares
-            print(bidder.shares)
-            total_shares = max(total_shares - bidder.shares, 0)
+            if total_shares >= bidder.shares: # bidder receives all the shares he wanted
+                bidder.received = bidder.shares
+                total_shares -= bidder.shares
+                bidder.shares = 0
+            else: # bidder receives only what's available
+                bidder.received = total_shares
+                tmp = bidder.shares
+                bidder.shares -= total_shares
+                total_shares -= tmp
         
     unallocated_bidder_ids = []
     if total_shares == 0: # no more shares to distribute, there is possibility of unallocated bidders
