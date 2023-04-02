@@ -1,6 +1,5 @@
 '''
 https://www.hackerrank.com/challenges/cut-the-tree/problem
-
 There is an undirected tree where each vertex is numbered from  to , and each contains a data value. The sum of a tree is the sum of all its nodes' data values. If an edge is cut, two smaller trees are formed. The difference between two trees is the absolute value of the difference in their sums.
 
 Given a tree, determine which edge to cut so that the resulting trees have a minimal difference between them, then return that difference.
@@ -10,6 +9,21 @@ Example
 
 In this case, node numbers match their weights for convenience. The graph is shown below.
 
+To run, do python3 cut-the-tree.py
+10
+205 573 985 242 830 514 592 263 142 915
+2 8
+10 5
+1 7
+6 9
+4 3
+8 10
+5 1
+7 6
+9 4
+
+
+Expected output:  99
 '''
 
 #!/bin/python3
@@ -85,9 +99,8 @@ def cutTheTree(data, edges):
 
 
 if __name__ == '__main__':
-    fptr = open(os.environ['cut-the-tree.txt'], 'r')
+    # fptr = open(os.environ['OUTPUT_PATH'], 'r')
 
-    fptr.read()
     n = int(input().strip())
 
     data = list(map(int, input().rstrip().split()))
